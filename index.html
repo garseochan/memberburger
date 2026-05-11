@@ -1,1 +1,818 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,minimum-scale=1,user-scalable=no">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<title>A버거 챌린지 (로그인)</title>
+<style>
+html{touch-action:manipulation}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent;user-select:none;touch-action:manipulation}
+body{background:#0d0400;font-family:'Black Han Sans',sans-serif;color:#fff;max-width:430px;margin:0 auto;min-height:100vh;overflow-x:hidden;overflow-y:auto}
+@import url('https://fonts.googleapis.com/css2?family=Black+Han+Sans&family=Noto+Sans+KR:wght@400;700&display=swap');
+.noto{font-family:'Noto Sans KR',sans-serif}
+button{touch-action:manipulation;cursor:pointer;border:none;font-family:'Black Han Sans',sans-serif;transition:all .15s}
+button:active{transform:scale(.96)}
+.pbtn{background:linear-gradient(135deg,#D4850A,#FF6B00);color:#fff;border-radius:14px;padding:14px 0;width:100%;font-size:17px;box-shadow:0 4px 20px rgba(212,133,10,.4)}
+.screen{display:none;flex-direction:column;min-height:100vh}
+.screen.active{display:flex}
+.overlay{position:fixed;inset:0;background:rgba(0,0,0,.85);display:flex;align-items:center;justify-content:center;padding:0 28px;z-index:999;backdrop-filter:blur(6px)}
+.mbox{background:linear-gradient(160deg,#1e0e02,#120800);border:1px solid rgba(212,133,10,.4);border-radius:24px;padding:28px 24px;width:100%;text-align:center;animation:mb .3s ease}
+@keyframes mb{from{transform:scale(.3);opacity:0}60%{transform:scale(1.1)}to{transform:scale(1);opacity:1}}
+@keyframes fl{0%,100%{transform:translateY(0)}50%{transform:translateY(-12px)}}
+@keyframes bi{from{transform:scale(.3);opacity:0}60%{transform:scale(1.15)}to{transform:scale(1);opacity:1}}
+@keyframes gl{0%,100%{box-shadow:0 0 16px rgba(212,133,10,.3)}50%{box-shadow:0 0 40px rgba(212,133,10,.7)}}
+#board{display:grid;border:2px solid rgba(212,133,10,.4);border-radius:10px;overflow:hidden;background:#080402}
+.cell{display:flex;align-items:center;justify-content:center;border:1px solid rgba(255,255,255,.03)}
+.cell.flash{background:rgba(255,220,50,.55)!important}
+</style>
+</head>
+<body>
 
+<!-- 로그인 인트로 -->
+<div id="s-intro" class="screen active">
+  <div style="padding:28px 20px 60px;display:flex;flex-direction:column;align-items:center;text-align:center">
+    <div style="font-size:32px;background:linear-gradient(90deg,#D4850A,#FF9500);-webkit-background-clip:text;-webkit-text-fill-color:transparent;letter-spacing:2px;margin-top:4px">A버거 챌린지</div>
+    <div class="noto" style="font-size:13px;color:#888;margin-top:4px;margin-bottom:16px">1분 30초 안에 버거를 최대한 많이 완성하라! 🔥</div>
+
+    <!-- 레시피 -->
+    <div style="background:rgba(212,133,10,.08);border:1px solid rgba(212,133,10,.25);border-radius:16px;padding:14px 16px;width:100%;margin-bottom:14px;text-align:left">
+      <div style="font-size:13px;margin-bottom:10px">🍔 버거 완성 순서 (아래 → 위)</div>
+      <div style="display:flex;gap:5px;align-items:center;justify-content:center;flex-wrap:wrap">
+        <div style="text-align:center">
+          <svg width="30" height="30" viewBox="0 0 60 40"><path d="M5 10 Q5 35 30 35 Q55 35 55 10 Z" fill="#E8A020"/><path d="M8 13 Q8 32 30 32 Q52 32 52 13 Z" fill="#F5B830"/><ellipse cx="30" cy="10" rx="25" ry="5" fill="#FFD060" opacity="0.35"/><ellipse cx="30" cy="35" rx="27" ry="5" fill="#a86000" opacity="0.5"/></svg>
+          <div class="noto" style="font-size:9px;color:#E8A020;margin-top:2px">아래번</div>
+        </div>
+        <span style="color:#555;font-size:11px">→</span>
+        <div style="text-align:center"><span style="font-size:22px">🥬</span><div class="noto" style="font-size:9px;color:#4CAF50;margin-top:2px">양상추</div></div>
+        <span style="color:#555;font-size:11px">→</span>
+        <div style="text-align:center"><span style="font-size:22px">🍅</span><div class="noto" style="font-size:9px;color:#F44336;margin-top:2px">토마토</div></div>
+        <span style="color:#555;font-size:11px">→</span>
+        <div style="text-align:center"><span style="font-size:22px">🥩</span><div class="noto" style="font-size:9px;color:#8D6E63;margin-top:2px">패티</div></div>
+        <span style="color:#555;font-size:11px">→</span>
+        <div style="text-align:center"><span style="font-size:22px">🧀</span><div class="noto" style="font-size:9px;color:#FFC107;margin-top:2px">치즈</div></div>
+        <span style="color:#555;font-size:11px">→</span>
+        <div style="text-align:center">
+          <svg width="30" height="30" viewBox="0 0 60 40"><path d="M5 30 Q5 5 30 5 Q55 5 55 30 Z" fill="#E8A020"/><path d="M8 28 Q8 8 30 8 Q52 8 52 28 Z" fill="#F5B830"/><ellipse cx="30" cy="28" rx="22" ry="5" fill="#FFD060" opacity="0.45"/><ellipse cx="18" cy="16" rx="5" ry="3.5" fill="#FFD060" opacity="0.3"/><ellipse cx="40" cy="13" rx="4" ry="3" fill="#FFD060" opacity="0.3"/></svg>
+          <div class="noto" style="font-size:9px;color:#E8A020;margin-top:2px">위번🔄</div>
+        </div>
+      </div>
+      <div class="noto" style="font-size:10px;color:#666;margin-top:8px">위번은 🔄 버튼으로 뒤집어야 해요!</div>
+    </div>
+
+    <!-- 현황판 -->
+    <div style="background:rgba(255,255,255,.04);border:1px solid rgba(255,255,255,.08);border-radius:16px;padding:14px 16px;width:100%;margin-bottom:14px">
+      <div style="font-size:13px;margin-bottom:12px">📊 내 현황</div>
+      <div style="background:rgba(255,149,0,.08);border:1px solid rgba(255,149,0,.2);border-radius:12px;padding:10px 14px;margin-bottom:8px;display:flex;justify-content:space-between;align-items:center">
+        <div>
+          <div class="noto" style="font-size:11px;color:#888">남은 게임 횟수</div>
+          <div class="noto" style="font-size:10px;color:#666;margin-top:2px">기본 3회 + 공유 시 +1회</div>
+        </div>
+        <div style="text-align:right">
+          <div id="intro-plays" style="font-size:28px;color:#FF9500;line-height:1">3</div>
+          <div class="noto" style="font-size:10px;color:#666">회 남음</div>
+        </div>
+      </div>
+      <div class="noto" style="font-size:10px;color:#666;line-height:1.8;background:rgba(255,255,255,.03);border-radius:8px;padding:8px 10px">
+        📢 공유 1회 → <span style="color:#FF9500">+1회</span> (잔여 0회일 때만 제공)
+      </div>
+    </div>
+
+    <button class="pbtn" id="start-btn" onclick="startGame()">🍔 게임 시작!</button>
+
+    <!-- 공유 -->
+    <div style="display:flex;gap:8px;margin-top:10px;width:100%">
+      <button onclick="doKakao(0)" style="flex:1;padding:12px 0;border:none;border-radius:13px;background:#FEE500;color:#191919;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#191919"><path d="M12 3C6.477 3 2 6.477 2 10.5c0 2.632 1.608 4.938 4 6.32V20l3.5-2.1c.82.13 1.67.1 2.5.1 5.523 0 10-3.477 10-7.5S17.523 3 12 3z"/></svg>
+        카카오 공유
+      </button>
+      <button id="copy-intro" onclick="doCopy('copy-intro')" style="flex:1;padding:12px 0;border:1px solid rgba(255,255,255,.12);border-radius:13px;background:rgba(255,255,255,.06);color:#ccc;font-size:14px">🔗 URL 복사</button>
+    </div>
+
+    <!-- 경품 안내 -->
+    <div style="background:linear-gradient(135deg,rgba(212,133,10,.1),rgba(255,100,0,.05));border:1px solid rgba(212,133,10,.3);border-radius:14px;padding:14px 16px;width:100%;margin-top:14px;text-align:left">
+      <div style="font-size:13px;margin-bottom:4px">🎫 버거 챌린지 혜택 안내</div>
+      <div class="noto" style="font-size:11px;color:#888;margin-bottom:10px">OK캐쉬백 앱 로그인 후 게임 진행 시 쿠폰 제공</div>
+      <div style="display:flex;flex-direction:column;gap:6px">
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border-radius:10px;padding:8px 10px">
+          <div style="font-size:22px;font-weight:700;color:#555;min-width:44px;text-align:center">0%</div>
+          <div><div style="font-size:13px;color:#666">버거 0 ~ 2개</div><div class="noto" style="font-size:11px;color:#555">쿠폰 미제공 😢</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(33,150,243,.08);border-radius:10px;padding:8px 10px">
+          <div style="font-size:22px;font-weight:700;color:#64B5F6;min-width:44px;text-align:center">20%</div>
+          <div><div style="font-size:13px;color:#64B5F6">버거 3 ~ 5개</div><div class="noto" style="font-size:11px;color:#aaa">A버거 20% 할인 쿠폰 (1인 최대 3개)</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(156,39,176,.08);border-radius:10px;padding:8px 10px">
+          <div style="font-size:22px;font-weight:700;color:#CE93D8;min-width:44px;text-align:center">30%</div>
+          <div><div style="font-size:13px;color:#CE93D8">버거 6 ~ 8개</div><div class="noto" style="font-size:11px;color:#aaa">A버거 30% 할인 쿠폰 (1인 최대 3개)</div></div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,193,7,.08);border-radius:10px;padding:8px 10px">
+          <div style="font-size:22px;font-weight:700;color:#FFD700;min-width:44px;text-align:center">40%</div>
+          <div><div style="font-size:13px;color:#FFD700">버거 9개 이상</div><div class="noto" style="font-size:11px;color:#aaa">A버거 40% 할인 쿠폰 (1인 최대 3개)</div></div>
+        </div>
+        <div style="background:rgba(255,255,255,.03);border-radius:8px;padding:8px 10px">
+          <div class="noto" style="font-size:10px;color:#666">· 쿠폰은 게임 결과 화면에서 바로 발급 가능<br>· 동일 등급 쿠폰은 1인당 최대 3개까지 발급</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 게임 -->
+<div id="s-game" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-bottom:1px solid rgba(212,133,10,.12)">
+    <div style="position:relative;width:52px;height:52px">
+      <svg width="52" height="52" style="transform:rotate(-90deg)">
+        <circle cx="26" cy="26" r="21" fill="none" stroke="rgba(255,255,255,.08)" stroke-width="4"/>
+        <circle id="timer-ring" cx="26" cy="26" r="21" fill="none" stroke="#4CAF50" stroke-width="4" stroke-dasharray="131.9" stroke-dashoffset="0" stroke-linecap="round" style="transition:stroke-dashoffset 1s linear,stroke .3s"/>
+      </svg>
+      <div id="timer-txt" style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:14px;color:#4CAF50">90</div>
+    </div>
+    <div style="text-align:center;flex:1;padding:0 6px">
+      <div class="noto" style="font-size:9px;color:#888;margin-bottom:3px">완성 순서 (아래→위)</div>
+      <div style="display:flex;gap:2px;justify-content:center;align-items:center">
+        <svg width="16" height="16" viewBox="0 0 60 40"><path d="M5 10 Q5 35 30 35 Q55 35 55 10 Z" fill="#E8A020"/><path d="M8 13 Q8 32 30 32 Q52 32 52 13 Z" fill="#F5B830"/><ellipse cx="30" cy="35" rx="27" ry="5" fill="#a86000" opacity="0.5"/></svg>
+        <span style="color:#555;font-size:8px">→</span><span style="font-size:14px">🥬</span>
+        <span style="color:#555;font-size:8px">→</span><span style="font-size:14px">🍅</span>
+        <span style="color:#555;font-size:8px">→</span><span style="font-size:14px">🥩</span>
+        <span style="color:#555;font-size:8px">→</span><span style="font-size:14px">🧀</span>
+        <span style="color:#555;font-size:8px">→</span>
+        <svg width="16" height="16" viewBox="0 0 60 40"><path d="M5 30 Q5 5 30 5 Q55 5 55 30 Z" fill="#E8A020"/><path d="M8 28 Q8 8 30 8 Q52 8 52 28 Z" fill="#F5B830"/><ellipse cx="30" cy="28" rx="22" ry="5" fill="#FFD060" opacity="0.45"/></svg>
+      </div>
+    </div>
+    <div style="text-align:right">
+      <div class="noto" style="font-size:10px;color:#888">버거</div>
+      <div id="burger-count" style="font-size:20px;color:#FF9500;line-height:1">🍔×0</div>
+      <div class="noto" style="font-size:9px;color:#888;margin-top:3px">NEXT</div>
+      <div id="next-cell" style="width:36px;height:36px;border-radius:8px;border:1.5px solid #E8A020;background:rgba(232,160,32,.15);display:flex;align-items:center;justify-content:center;margin-left:auto"></div>
+    </div>
+  </div>
+  <div style="display:flex;justify-content:center;padding:4px 0"><div id="board"></div></div>
+  <div id="cur-hint" class="noto" style="text-align:center;font-size:11px;height:16px;margin-top:2px"></div>
+  <div style="padding:5px 12px 10px;display:grid;grid-template-columns:1fr 1.5fr 1fr 1fr;gap:5px">
+    <button onclick="moveLeft()" style="padding:12px 0;border:1px solid rgba(212,133,10,.22);background:rgba(212,133,10,.07);border-radius:12px;color:#D4850A;font-size:20px">◀</button>
+    <button onclick="hardDrop()" style="padding:12px 0;border:1px solid rgba(212,133,10,.5);background:rgba(212,133,10,.18);border-radius:12px;color:#FF9500;font-size:12px">▼▼ 내리기</button>
+    <button id="flip-btn" onclick="flipBun()" style="padding:12px 0;border:1px solid rgba(212,133,10,.22);background:rgba(212,133,10,.07);border-radius:12px;color:#D4850A;font-size:20px;opacity:.3">🔄</button>
+    <button onclick="moveRight()" style="padding:12px 0;border:1px solid rgba(212,133,10,.22);background:rgba(212,133,10,.07);border-radius:12px;color:#D4850A;font-size:20px">▶</button>
+  </div>
+</div>
+
+<!-- 로그인 결과 -->
+<div id="s-result" class="screen">
+  <div style="display:flex;flex-direction:column;align-items:center;padding:32px 20px 60px;text-align:center">
+
+    <!-- 좌뇌 나이 -->
+    <div style="background:radial-gradient(circle at 50% 0%,rgba(255,149,0,.28),rgba(30,14,2,.98) 42%,#120800 100%);border:1.5px solid rgba(255,149,0,.55);border-radius:24px;padding:22px 18px 20px;width:100%;margin-top:0;text-align:center;box-shadow:0 10px 34px rgba(0,0,0,.35),0 0 36px rgba(255,149,0,.18);position:relative;overflow:hidden">
+      <div style="position:absolute;top:14px;left:0;right:0;font-size:10px;letter-spacing:3px;color:rgba(255,255,255,.12);font-family:sans-serif">BRAIN AGE</div>
+      <div style="font-size:48px;margin-top:8px">🧠</div>
+      <div class="noto" style="font-size:13px;color:#aaa;margin-top:6px">내 좌뇌 나이</div>
+      <div id="brain-age" style="font-size:64px;line-height:1;color:#FFD700;text-shadow:0 0 26px rgba(255,215,0,.38);margin-top:8px">—<span style="font-size:32px;color:#FF9500">세</span></div>
+      <div id="brain-grade" style="font-size:18px;color:#fff;margin-top:12px">—</div>
+      <div id="brain-msg" class="noto" style="font-size:14px;color:#ddd;line-height:1.7;margin-top:10px;white-space:pre-line">—</div>
+      <div style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.35);border-radius:999px;padding:8px 13px;color:#FF9500;font-size:14px">🍔 <span id="burger-score-display">0</span>개 완성</div>
+    </div>
+
+    <!-- 버거 달성 쿠폰 -->
+    <div id="no-coupon-box" style="background:rgba(255,255,255,.03);border:1px solid rgba(255,255,255,.08);border-radius:14px;padding:14px 16px;width:100%;margin-top:12px;text-align:center">
+      <div class="noto" style="font-size:12px;color:#666">버거 3개 이상 완성하면 할인 쿠폰을 받을 수 있어요! 🍔</div>
+    </div>
+
+    <!-- 다시 도전 -->
+    <button id="retry-btn" onclick="tryRetry()" style="width:100%;padding:15px 0;border:none;border-radius:14px;background:linear-gradient(135deg,#D4850A,#FF6B00);color:#fff;font-size:16px;margin-top:14px;box-shadow:0 4px 20px rgba(212,133,10,.4)">
+      🍔 게임 다시 도전!
+    </button>
+
+    <!-- 쿠폰 발급 받기 (쿠폰 있을 때만 노출) -->
+    <button id="issue-btn" onclick="tryIssueCoupon()" style="display:none;width:100%;padding:15px 0;border:none;border-radius:14px;font-size:16px;margin-top:10px;font-family:'Black Han Sans',sans-serif">
+      🎫 쿠폰 발급 받기 (동일 쿠폰 최대 3회 발급)
+    </button>
+
+    <!-- 공유 -->
+    <div style="display:flex;gap:8px;margin-top:10px;width:100%">
+      <button onclick="doKakao(1)" style="flex:1;padding:13px 0;border:none;border-radius:13px;background:#FEE500;color:#191919;font-size:14px;display:flex;align-items:center;justify-content:center;gap:6px">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="#191919"><path d="M12 3C6.477 3 2 6.477 2 10.5c0 2.632 1.608 4.938 4 6.32V20l3.5-2.1c.82.13 1.67.1 2.5.1 5.523 0 10-3.477 10-7.5S17.523 3 12 3z"/></svg>
+        카카오 공유
+      </button>
+      <button id="copy-result" onclick="doCopy('copy-result')" style="flex:1;padding:13px 0;border:1px solid rgba(255,255,255,.12);border-radius:13px;background:rgba(255,255,255,.06);color:#ccc;font-size:14px">🔗 URL 복사</button>
+    </div>
+
+    <!-- 첫 화면으로 -->
+    <button onclick="goHome()" style="width:100%;padding:13px 0;border:1px solid rgba(255,255,255,.15);border-radius:14px;background:rgba(255,255,255,.05);color:#aaa;font-size:14px;margin-top:8px">
+      🏠 첫 화면에서 게임 기회 확인하기
+    </button>
+
+    <!-- 버거 챌린지 혜택 안내 -->
+    <div style="background:linear-gradient(135deg,rgba(212,133,10,.1),rgba(255,100,0,.05));border:1px solid rgba(212,133,10,.3);border-radius:14px;padding:14px 16px;width:100%;margin-top:12px;text-align:left">
+      <div style="font-size:13px;margin-bottom:4px">🎫 버거 챌린지 혜택 안내</div>
+      <div class="noto" style="font-size:11px;color:#888;margin-bottom:10px">OK캐쉬백 앱 로그인 후 게임 진행 시 쿠폰 제공</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.04);border-radius:8px;padding:7px 10px">
+          <div style="font-size:18px;font-weight:700;color:#555;min-width:38px;text-align:center">0%</div>
+          <div class="noto" style="font-size:12px;color:#666">버거 0 ~ 2개 · 쿠폰 미제공 😢</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(33,150,243,.08);border-radius:8px;padding:7px 10px">
+          <div style="font-size:18px;font-weight:700;color:#64B5F6;min-width:38px;text-align:center">20%</div>
+          <div class="noto" style="font-size:12px;color:#aaa">버거 3 ~ 5개 · A버거 20% 할인</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(156,39,176,.08);border-radius:8px;padding:7px 10px">
+          <div style="font-size:18px;font-weight:700;color:#CE93D8;min-width:38px;text-align:center">30%</div>
+          <div class="noto" style="font-size:12px;color:#aaa">버거 6 ~ 8개 · A버거 30% 할인</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:10px;background:rgba(255,193,7,.08);border-radius:8px;padding:7px 10px">
+          <div style="font-size:18px;font-weight:700;color:#FFD700;min-width:38px;text-align:center">40%</div>
+          <div class="noto" style="font-size:12px;color:#aaa">버거 9개 이상 · A버거 40% 할인</div>
+        </div>
+      </div>
+      <div class="noto" style="font-size:10px;color:#666;margin-top:8px">동일 등급 쿠폰 1인당 최대 3개까지 발급</div>
+    </div>
+  </div>
+</div>
+
+<!-- 모달 -->
+<div id="modal-wrap" style="display:none">
+  <div class="overlay">
+    <div class="mbox">
+      <div id="m-emoji" style="font-size:52px;margin-bottom:10px"></div>
+      <div id="m-title" style="font-size:19px;line-height:1.4;white-space:pre-line;margin-bottom:8px"></div>
+      <div id="m-desc" class="noto" style="font-size:13px;color:#aaa;line-height:1.8;white-space:pre-line"></div>
+      <div style="display:flex;gap:10px;margin-top:16px">
+        <button id="m-ok" style="flex:1;padding:13px 0;border:none;border-radius:12px;background:linear-gradient(135deg,#D4850A,#FF6B00);color:#fff;font-size:15px"></button>
+        <button onclick="hideModal()" style="width:46px;height:46px;border:1px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(255,255,255,.06);color:#888;font-size:18px">✕</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const COLS=6,ROWS=12,CELL=46,GAME_TIME=90,BASE_PLAYS=3;
+const OKC_URL='https://m.okcashbag.com/g/w/v1.0/fabhot/list.html';
+const ORDER=['BOT','LT','TM','PT','CH','TOP'];
+const INFO={
+  TOP:{e:'',label:'위번',color:'#E8A020',bg:'rgba(232,160,32,.15)',bd:'#E8A020'},
+  BOT:{e:'',label:'아래번',color:'#E8A020',bg:'rgba(232,160,32,.15)',bd:'#E8A020'},
+  LT:{e:'🥬',label:'양상추',color:'#4CAF50',bg:'rgba(76,175,80,.15)',bd:'#4CAF50'},
+  TM:{e:'🍅',label:'토마토',color:'#F44336',bg:'rgba(244,67,54,.15)',bd:'#F44336'},
+  PT:{e:'🥩',label:'패티',color:'#8D6E63',bg:'rgba(141,110,99,.2)',bd:'#8D6E63'},
+  CH:{e:'🧀',label:'치즈',color:'#FFC107',bg:'rgba(255,193,7,.18)',bd:'#FFC107'},
+};
+// 아래번: 아래가 납작한 반원
+const bunB=s=>`<svg width="${s}" height="${s}" viewBox="0 0 60 40" style="display:block"><path d="M5 10 Q5 35 30 35 Q55 35 55 10 Z" fill="#E8A020"/><path d="M8 13 Q8 32 30 32 Q52 32 52 13 Z" fill="#F5B830"/><ellipse cx="30" cy="10" rx="25" ry="5" fill="#FFD060" opacity="0.35"/><ellipse cx="30" cy="35" rx="27" ry="5" fill="#a86000" opacity="0.5"/></svg>`;
+// 위번: 위로 볼록한 반원
+const bunT=s=>`<svg width="${s}" height="${s}" viewBox="0 0 60 40" style="display:block"><path d="M5 30 Q5 5 30 5 Q55 5 55 30 Z" fill="#E8A020"/><path d="M8 28 Q8 8 30 8 Q52 8 52 28 Z" fill="#F5B830"/><ellipse cx="30" cy="28" rx="22" ry="5" fill="#FFD060" opacity="0.45"/><ellipse cx="18" cy="16" rx="5" ry="3.5" fill="#FFD060" opacity="0.3"/><ellipse cx="40" cy="13" rx="4" ry="3" fill="#FFD060" opacity="0.3"/></svg>`;
+
+const emptyBoard=()=>Array.from({length:ROWS},()=>Array(COLS).fill(null));
+function shuffle(a){const b=[...a];for(let i=b.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[b[i],b[j]]=[b[j],b[i]];}return b;}
+function fixCons(a){for(let i=1;i<a.length;i++){if(a[i]===a[i-1]){for(let j=i+1;j<a.length;j++){if(a[j]!==a[i-1]){[a[i],a[j]]=[a[j],a[i]];break;}}}}}
+function buildBag(){
+  // 게임성 유지 난이도 완화 v3
+  // 목표:
+  // - 첫 1개는 정순
+  // - 두 번째는 살짝 섞은 학습 구간
+  // - 이후는 랜덤성을 유지하되 bun(BOT/TOP) 몰림과 재료 가뭄을 모두 방지
+
+  const opening=[
+    'BOT','LT','TM','PT','CH','TOP'
+  ];
+
+  const softMix=[
+    ...shuffle(['BOT','LT','TM','PT','CH']),
+    'TOP'
+  ];
+
+  // 이후 풀: 완성 가능성을 유지하되 재료 균형을 맞춤
+  const pool=[
+    'BOT','LT','TM','PT','CH','TOP',
+    'BOT','LT','TM','PT','CH','TOP',
+    'BOT','LT','TM','PT','CH','TOP',
+    'LT','TM','PT','CH',
+    'LT','TM','PT','CH',
+    'TM','PT','CH'
+  ];
+
+  const result=[...opening,...softMix];
+
+  function bunCount(arr){
+    return arr.filter(x=>x==='BOT'||x==='TOP').length;
+  }
+  function coreCount(arr){
+    return arr.filter(x=>x==='LT'||x==='TM'||x==='PT'||x==='CH').length;
+  }
+
+  while(pool.length){
+    const recent=result.slice(-8);
+    const recent5=result.slice(-5);
+    const recent4=result.slice(-4);
+    const last=result[result.length-1];
+
+    let pickIndex=-1;
+
+    // 1) 최근 5개 중 bun이 3개 이상이면 다음은 반드시 속재료 우선
+    if(bunCount(recent5)>=3){
+      const cores=['LT','TM','PT','CH'].filter(t=>pool.includes(t) && t!==last);
+      if(cores.length){
+        const t=cores[Math.floor(Math.random()*cores.length)];
+        pickIndex=pool.indexOf(t);
+      }
+    }
+
+    // 2) 핵심 재료 가뭄 방지: 최근 8개 안에 안 나온 속재료 우선
+    if(pickIndex<0){
+      const missingCore=['LT','TM','PT','CH'].find(t=>!recent.includes(t) && pool.includes(t) && t!==last);
+      if(missingCore) pickIndex=pool.indexOf(missingCore);
+    }
+
+    // 3) TOP 가뭄 방지: 최근 9개 안에 TOP이 없으면 TOP 공급
+    // 단, 최근 bun이 많으면 속재료를 먼저 공급
+    if(pickIndex<0){
+      const recent9=result.slice(-9);
+      if(!recent9.includes('TOP') && pool.includes('TOP') && bunCount(recent5)<3 && last!=='TOP'){
+        pickIndex=pool.indexOf('TOP');
+      }
+    }
+
+    // 4) 일반 후보 선택: 연속 동일 금지, bun 과밀 금지
+    if(pickIndex<0){
+      const candidates=[];
+      for(let i=0;i<pool.length;i++){
+        const t=pool[i];
+        if(t===last) continue;
+
+        // bun이 최근에 많으면 BOT/TOP 후보 제외
+        if((t==='BOT'||t==='TOP') && bunCount(recent5)>=2) continue;
+
+        // BOT/TOP이 4개 안에 이미 있으면 같은 계열 과밀 방지
+        if(t==='BOT' && recent4.filter(x=>x==='BOT').length>=1) continue;
+        if(t==='TOP' && recent4.filter(x=>x==='TOP').length>=1) continue;
+
+        candidates.push(i);
+      }
+
+      if(candidates.length){
+        pickIndex=candidates[Math.floor(Math.random()*candidates.length)];
+      }
+    }
+
+    // 5) fallback: 그래도 없으면 속재료 우선, 마지막으로 동일 블록만 피함
+    if(pickIndex<0){
+      const coreFallback=[];
+      for(let i=0;i<pool.length;i++){
+        if(['LT','TM','PT','CH'].includes(pool[i]) && pool[i]!==last) coreFallback.push(i);
+      }
+      if(coreFallback.length){
+        pickIndex=coreFallback[Math.floor(Math.random()*coreFallback.length)];
+      } else {
+        const fallback=[];
+        for(let i=0;i<pool.length;i++){
+          if(pool[i]!==last) fallback.push(i);
+        }
+        pickIndex=(fallback.length?fallback:[0])[Math.floor(Math.random()*(fallback.length?fallback.length:1))];
+      }
+    }
+
+    result.push(pool.splice(pickIndex,1)[0]);
+  }
+
+  fixCons(result);
+  return result;
+}
+let bag=[],lastType=null,genHistory=[];
+function refillBag(){
+  bag=buildBag();
+  if(lastType&&bag[0]===lastType&&bag.length>1)[bag[0],bag[1]]=[bag[1],bag[0]];
+}
+
+function isBunType(t){return t==='BOT'||t==='TOP';}
+function isCoreType(t){return t==='LT'||t==='TM'||t==='PT'||t==='CH';}
+
+function boardBunPressure(){
+  if(!board) return 0;
+  let filled=0,buns=0;
+  for(let r=0;r<ROWS;r++){
+    for(let c=0;c<COLS;c++){
+      const t=board[r][c];
+      if(t){
+        filled++;
+        if(isBunType(t)) buns++;
+      }
+    }
+  }
+  if(filled===0) return 0;
+  return buns/filled;
+}
+
+function shouldAvoidBun(){
+  const recent6=genHistory.slice(-6);
+  const recent8=genHistory.slice(-8);
+  const bun6=recent6.filter(isBunType).length;
+  const bun8=recent8.filter(isBunType).length;
+  const pressure=boardBunPressure();
+
+  // 최근 생성 흐름이나 현재 보드가 번-heavy이면 다음은 속재료 우선
+  return bun6>=2 || bun8>=3 || pressure>=0.34;
+}
+
+function pickFromBag(){
+  if(!bag.length) refillBag();
+
+  let idx=0;
+  const first=bag[0];
+
+  // 봉지의 다음 블록이 번인데 이미 번이 많은 상황이면 가까운 속재료로 교체
+  if(isBunType(first) && shouldAvoidBun()){
+    const priority=['TM','PT','CH','LT'];
+    let best=-1;
+
+    for(const p of priority){
+      const i=bag.findIndex((t,j)=>j>0 && t===p);
+      if(i>0 && (best<0 || i<best)) best=i;
+    }
+
+    if(best>0) idx=best;
+  }
+
+  // 같은 블록 연속 방지
+  if(bag[idx]===lastType && bag.length>1){
+    const alt=bag.findIndex((t,j)=>j!==idx && t!==lastType && (!shouldAvoidBun() || isCoreType(t)));
+    if(alt>=0) idx=alt;
+  }
+
+  return bag.splice(idx,1)[0];
+}
+
+function rand(){
+  const t=pickFromBag();
+  lastType=t;
+  genHistory.push(t);
+  if(genHistory.length>30) genHistory.shift();
+  return t;
+}
+
+let plays=BASE_PLAYS,issuedCount=0,usedCount=0,playedCount=0;
+let board,curCol,curRow,curType,nextType,burgers,timeLeft,timerID,dropID,gameActive=false,isLanding=false;
+
+function show(id){document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));document.getElementById(id).classList.add('active');}
+
+function updateIntroUI(){
+  const el=document.getElementById('intro-plays');
+  if(el){el.textContent=plays;el.style.color=plays>0?'#FF9500':'#555';}
+  const btn=document.getElementById('start-btn');
+  if(btn){btn.textContent=plays>0?'🍔 게임 시작!':'🎫 쿠폰 받고 시작';btn.onclick=plays>0?startGame:goOKC;}
+  // 현황판
+  const ip=document.getElementById('intro-plays');if(ip){ip.textContent=plays;ip.style.color=plays>0?'#FF9500':'#555';}
+  const ipd=document.getElementById('intro-played');if(ipd)ipd.textContent=playedCount;
+  const ii=document.getElementById('intro-issued');if(ii)ii.textContent=issuedCount;
+  const iu=document.getElementById('intro-used');if(iu)iu.textContent=usedCount;
+  const ib=document.getElementById('issue-bar');if(ib)ib.style.width=(issuedCount/MAX_ISSUE*100)+'%';
+  const ub=document.getElementById('use-bonus');if(ub)ub.textContent='+'+usedCount*10+'회 보너스';
+}
+
+function getLeftBrainResult(score){
+  const s=Math.max(0, Number(score)||0);
+  const map=[
+    {min:6,age:19,title:'좌뇌 고속모드',desc:'리듬 타기 시작하면 이렇게 됩니다\n이 정도면 진짜 잘하는 편이에요'},
+    {min:5,age:25,title:'상위권 감각',desc:'속도와 정확도 둘 다 좋은 상태\n한 판 더 하면 더 갈 수 있어요'},
+    {min:4,age:33,title:'흐름 꽤 좋음',desc:'안정적으로 쌓는 플레이\n이제 속도만 붙이면 상위권이에요'},
+    {min:3,age:40,title:'감 잡기 시작',desc:'이제 게임 흐름이 보이는 단계\n여기서부터 점수 확 올라갑니다'},
+    {min:2,age:45,title:'구조 파악 완료',desc:'알겠는데 왜 안 되지? 딱 그 구간\n조금만 익숙해지면 바로 올라가요'},
+    {min:1,age:50,title:'예열 완료',desc:'처음엔 다 이렇게 시작해요\n몇 판만 더 하면 확 달라집니다'},
+    {min:0,age:60,title:'좌뇌 준비운동 중',desc:'아직 손이 상황 파악 중이에요\n다음 판부터가 진짜 시작입니다'}
+  ];
+  return map.find(x=>s>=x.min);
+}
+
+function goOKC(){window.location.href=OKC_URL;}
+function goHome(){
+  document.querySelectorAll('.screen').forEach(s=>{s.classList.remove('active');s.style.display='none';});
+  const intro=document.getElementById('s-intro');
+  intro.classList.add('active');intro.style.display='flex';
+  updateIntroUI();
+  setTimeout(()=>{window.scrollTo({top:0,behavior:'smooth'});},50);
+}
+
+function startGame(){
+  plays--; bag=[]; lastType=null; genHistory=[]; board=emptyBoard();
+  curCol=Math.floor(COLS/2); curRow=0;
+  burgers=0; timeLeft=GAME_TIME; gameActive=true; isLanding=false;
+  curType=rand(); nextType=rand();
+  buildBoard(); renderBoard();
+  clearInterval(timerID); clearInterval(dropID);
+  startTimer(); startDrop();
+  show('s-game'); updateIntroUI();
+}
+
+function tryRetry(){
+  if(plays<=0){
+    showModal('🍔','게임기회가 모두\n소진되었습니다.',
+      'OK캐쉬백 앱을 방문하면\n추가 게임기회를 얻을 수 있습니다.\n이동하시겠습니까?',
+      '앱으로 이동',goOKC);
+  } else startGame();
+}
+
+function startTimer(){
+  timerID=setInterval(()=>{
+    if(!gameActive)return; timeLeft--;
+    const circ=2*Math.PI*21,ring=document.getElementById('timer-ring'),txt=document.getElementById('timer-txt');
+    ring.style.strokeDashoffset=circ*(1-timeLeft/GAME_TIME);
+    const col=timeLeft<=10?'#F44336':timeLeft<=20?'#FF9800':'#4CAF50';
+    ring.style.stroke=col;txt.style.color=col;txt.textContent=timeLeft;
+    if(timeLeft<=0){clearInterval(timerID);clearInterval(dropID);gameActive=false;endGame();}
+  },1000);
+}
+function startDrop(){
+  dropID=setInterval(()=>{
+    if(!gameActive||isLanding)return;
+    if(curRow+1>=ROWS||board[curRow+1][curCol]!==null)land();
+    else{curRow++;renderBoard();}
+  },400);
+}
+function land(){
+  if(isLanding)return;isLanding=true;
+  let lr=-1;
+  for(let r=ROWS-1;r>=0;r--){if(board[r][curCol]===null){lr=r;break;}}
+  if(lr===-1){isLanding=false;spawnNext();return;}
+  board[lr][curCol]=curType;
+  const done=[];
+  const doneStart={}; // column -> stack index from bottom where burger sequence starts
+  for(let c=0;c<COLS;c++){
+    // 아래에서부터 연속으로 쌓인 블록 전체를 확인합니다.
+    // 예: 맨 아래에 다른 블록이 하나 있어도,
+    // 그 위에 BOT→LT→TM→PT→CH→TOP 순서가 연속으로 있으면 버거로 인정합니다.
+    const stack=[];
+    for(let r=ROWS-1;r>=0;r--){
+      if(board[r][c]!==null) stack.push(board[r][c]);
+      else break;
+    }
+
+    for(let start=0; start<=stack.length-ORDER.length; start++){
+      const slice=stack.slice(start, start+ORDER.length);
+      if(ORDER.every((t,i)=>slice[i]===t)){
+        done.push(c);
+        doneStart[c]=start;
+        break;
+      }
+    }
+  }
+  if(done.length>0){
+    done.forEach(c=>{
+      const start=doneStart[c]||0;
+      for(let i=0;i<ORDER.length;i++){
+        const r=ROWS-1-(start+i);
+        const d=document.getElementById('c'+r+'_'+c);
+        if(d)d.classList.add('flash');
+      }
+    });
+    burgers+=done.length;
+    document.getElementById('burger-count').textContent='🍔×'+burgers;
+    setTimeout(()=>{
+      done.forEach(c=>{
+        // 완성된 6개가 맨 아래가 아니어도 정확히 그 구간만 제거합니다.
+        // stack은 아래->위 순서입니다.
+        const stack=[];
+        for(let r=ROWS-1;r>=0;r--){
+          if(board[r][c]!==null) stack.push(board[r][c]);
+          else break;
+        }
+        const start=doneStart[c]||0;
+        stack.splice(start, ORDER.length);
+
+        for(let r=0;r<ROWS;r++) board[r][c]=null;
+        stack.forEach((t,i)=>{board[ROWS-1-i][c]=t;});
+      });
+      isLanding=false;spawnNext();
+    },450);
+    return;
+  }
+  isLanding=false;spawnNext();
+}
+function spawnNext(){
+  curType=nextType;nextType=rand();curRow=0;curCol=Math.floor(COLS/2);
+  if(board[0].some(c=>c!==null)){gameActive=false;clearInterval(timerID);clearInterval(dropID);endGame();return;}
+  renderBoard();
+}
+function endGame(){
+  const result = getLeftBrainResult(burgers);
+  window.lastBrainResult = result;
+  document.getElementById('brain-age').innerHTML = result.age + '<span style="font-size:32px;color:#FF9500">세</span>';
+  // brain-grade 또는 brain-title 둘 다 시도
+  const gt=document.getElementById('brain-grade')||document.getElementById('brain-title');
+  if(gt) gt.innerHTML=result.title;
+  const gm=document.getElementById('brain-msg')||document.getElementById('brain-desc');
+  if(gm) gm.innerHTML=result.desc;
+  const bsd=document.getElementById('burger-score-display');
+  if(bsd) bsd.textContent=burgers;
+  const bs=document.getElementById('burger-score');
+  if(bs) bs.textContent=burgers+'개';
+  // 남은 횟수 UI
+  const rp=document.getElementById('result-plays');
+  if(rp) rp.textContent=plays;
+  const ri=document.getElementById('result-issued');
+  if(ri) ri.textContent=issuedCount;
+  const ru=document.getElementById('result-used');
+  if(ru) ru.textContent=usedCount;
+  const plb=document.getElementById('plays-left-box');
+  if(plb){if(plays<=0)plb.style.display='none';else plb.style.display='flex';}
+  // 인트로 현황판도 업데이트
+  updateIntroUI();
+  // 버거 달성 쿠폰 동적 표시
+  const coupon=getBurgerCoupon(burgers);
+  const ncb=document.getElementById('no-coupon-box');
+  const ib=document.getElementById('issue-btn');
+  if(coupon){
+    const remain=getCouponRemain(coupon.pct);
+    const colors={20:{bg:'linear-gradient(135deg,rgba(33,150,243,.25),rgba(21,101,192,.15))',border:'#2196F3',text:'#64B5F6'},
+                  30:{bg:'linear-gradient(135deg,rgba(156,39,176,.25),rgba(106,27,154,.15))',border:'#9C27B0',text:'#CE93D8'},
+                  40:{bg:'linear-gradient(135deg,rgba(255,193,7,.25),rgba(255,143,0,.15))',border:'#FFC107',text:'#FFD700'}};
+    const c=colors[coupon.pct]||colors[20];
+    if(ncb) ncb.style.display='none';
+    if(ib){
+      ib.style.display='block';
+      ib.style.background=remain>0?c.bg:'rgba(255,255,255,.05)';
+      ib.style.border='1.5px solid '+(remain>0?c.border:'#444');
+      ib.style.color=remain>0?c.text:'#666';
+      ib.textContent=remain>0?'🎫 쿠폰 발급 받기 (동일 쿠폰 최대 3회 발급)':'🚫 발급 한도 소진 ('+COUPON_MAX+'/'+COUPON_MAX+')';
+    }
+  } else {
+    if(ncb) ncb.style.display='block';
+    if(ib) ib.style.display='none';
+  }
+  show('s-result');
+}
+
+function buildBoard(){
+  const b=document.getElementById('board');
+  b.style.gridTemplateColumns='repeat('+COLS+','+CELL+'px)';
+  b.style.gridTemplateRows='repeat('+ROWS+','+CELL+'px)';
+  b.innerHTML='';
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const d=document.createElement('div');
+    d.className='cell';d.style.width=CELL+'px';d.style.height=CELL+'px';d.id='c'+r+'_'+c;b.appendChild(d);
+  }
+}
+function setCell(d,t,glow){
+  const i=INFO[t];const sz=glow?40:36;
+  d.style.background=i.bg;d.style.border=glow?'2px solid '+i.bd:'1px solid '+i.bd+'55';
+  d.style.transform=glow?'scale(1.06)':'scale(1)';d.style.boxShadow=glow?'0 0 12px '+i.color+'66':'none';
+  if(t==='TOP'){d.innerHTML=bunT(sz);d.style.fontSize='';}
+  else if(t==='BOT'){d.innerHTML=bunB(sz);d.style.fontSize='';}
+  else{d.innerHTML='';d.textContent=i.e;d.style.fontSize=glow?'26px':'22px';}
+}
+function ghostRow(){for(let r=ROWS-1;r>=0;r--){if(board[r][curCol]===null)return r;}return -1;}
+function renderBoard(){
+  const gr=ghostRow();
+  for(let r=0;r<ROWS;r++)for(let c=0;c<COLS;c++){
+    const d=document.getElementById('c'+r+'_'+c);
+    const isFalling=r===curRow&&c===curCol,isGhost=c===curCol&&r===gr&&!isFalling&&board[r][c]===null&&gr!==curRow;
+    const t=isFalling?curType:board[r][c];
+    d.className='cell';d.style.fontSize='';d.style.background='';d.style.border='1px solid rgba(255,255,255,.03)';d.style.transform='';d.style.boxShadow='';d.innerHTML='';d.textContent='';
+    if(t)setCell(d,t,isFalling);
+    else if(isGhost)d.style.border='1px dashed rgba(212,133,10,.2)';
+  }
+  const nc=document.getElementById('next-cell'),ni=INFO[nextType];
+  nc.style.background=ni.bg;nc.style.border='1.5px solid '+ni.bd;nc.style.fontSize='';nc.innerHTML='';nc.textContent='';
+  if(nextType==='TOP')nc.innerHTML=bunT(28);
+  else if(nextType==='BOT')nc.innerHTML=bunB(28);
+  else{nc.textContent=ni.e;nc.style.fontSize='20px';}
+  const ci=INFO[curType];
+  document.getElementById('cur-hint').textContent=ci.label+' 낙하 중'+(curType==='TOP'||curType==='BOT'?' — 🔄 뒤집기 가능':'');
+  document.getElementById('cur-hint').style.color=ci.color;
+  document.getElementById('flip-btn').style.opacity=(curType==='TOP'||curType==='BOT')?'1':'0.3';
+}
+function moveLeft(){
+  if(!gameActive)return;
+  const n=Math.max(0,curCol-1);
+  if(n===curCol)return;
+  if(board[curRow][n]!==null)return;
+  curCol=n;renderBoard();
+}
+function moveRight(){
+  if(!gameActive)return;
+  const n=Math.min(COLS-1,curCol+1);
+  if(n===curCol)return;
+  if(board[curRow][n]!==null)return;
+  curCol=n;renderBoard();
+}
+function flipBun(){if(!gameActive)return;if(curType==='TOP')curType='BOT';else if(curType==='BOT')curType='TOP';renderBoard();}
+function hardDrop(){if(!gameActive||isLanding)return;land();}
+
+document.addEventListener('keydown',e=>{
+  if(e.key==='ArrowLeft'){moveLeft();e.preventDefault();}
+  if(e.key==='ArrowRight'){moveRight();e.preventDefault();}
+  if(e.key==='ArrowDown'||e.key===' '){hardDrop();e.preventDefault();}
+  if(e.key==='ArrowUp'||e.key==='r'||e.key==='R'){flipBun();e.preventDefault();}
+});
+let tx=null;
+document.getElementById('s-game').addEventListener('touchstart',e=>{tx=e.touches[0].clientX;},{passive:true});
+document.getElementById('s-game').addEventListener('touchend',e=>{
+  if(tx===null)return;const dx=e.changedTouches[0].clientX-tx;if(Math.abs(dx)>28){dx>0?moveRight():moveLeft();}tx=null;
+});
+
+function showModal(emoji,title,desc,okLabel,okFn){
+  document.getElementById('m-emoji').textContent=emoji;
+  document.getElementById('m-title').textContent=title;
+  document.getElementById('m-desc').textContent=desc;
+  document.getElementById('m-ok').textContent=okLabel;
+  document.getElementById('m-ok').onclick=()=>{hideModal();okFn();};
+  document.getElementById('modal-wrap').style.display='block';
+}
+function hideModal(){document.getElementById('modal-wrap').style.display='none';}
+
+// TODO: 실제 배포 도메인으로 교체하세요. 예: https://m.okcashbag.com/event/burger-stack/
+const BASE_SHARE_URL = location.href.split('?')[0];
+// TODO: 카카오 공유 이미지까지 카드처럼 보이게 하려면, 아래 경로에 age별 PNG 이미지를 배포해야 합니다.
+// 예: https://your-domain.com/assets/leftbrain-20.png
+const SHARE_IMAGE_BASE_URL='./assets/share/';
+function getShareUrl(){
+  const score = (typeof burgers === 'number' ? burgers : 0);
+  const result = window.lastBrainResult || getLeftBrainResult(score);
+  return BASE_SHARE_URL + '?age=' + encodeURIComponent(result.age) + '&score=' + encodeURIComponent(score);
+}
+function getShareImageUrl(result){
+  if(!SHARE_IMAGE_BASE_URL) return '';
+  return SHARE_IMAGE_BASE_URL.replace(/\/$/,'') + '/leftbrain-' + result.age + '.png';
+}
+function buildShareText(){
+  const score = (typeof burgers === 'number' ? burgers : 0);
+  const result = window.lastBrainResult || getLeftBrainResult(score);
+  return '🧠 내 좌뇌 나이 ' + result.age + '세\n' + result.title + '\n' + result.desc + '\n🍔 ' + score + '개 완성\n너는 몇 살 나오는지 해봐 👉 ' + getShareUrl();
+}
+// 보너스: 잔여 0일 때만 +1회
+function addBonus(type){
+  if(plays<=0){
+    plays=1;
+    if(type==='issue'){issuedCount++;} 
+    updateIntroUI();
+    showToast('🎮 게임 기회 +1회 추가됐어요!');
+  }
+}
+function showToast(msg){
+  let t=document.getElementById('toast-msg');
+  if(!t){
+    t=document.createElement('div');t.id='toast-msg';
+    t.style.cssText='position:fixed;bottom:80px;left:50%;transform:translateX(-50%);background:rgba(212,133,10,.95);color:#fff;padding:10px 20px;border-radius:20px;font-size:14px;z-index:9999;font-family:"Black Han Sans",sans-serif;white-space:nowrap;box-shadow:0 4px 20px rgba(0,0,0,.4)';
+    document.body.appendChild(t);
+  }
+  t.textContent=msg;t.style.opacity='1';
+  clearTimeout(t._timer);
+  t._timer=setTimeout(()=>{t.style.opacity='0';},2000);
+}
+// 버거 달성 쿠폰 판정
+const COUPON_MAX=3;
+function getCouponCount(pct){return parseInt(localStorage.getItem('coupon_'+pct)||'0');}
+function addCouponCount(pct){localStorage.setItem('coupon_'+pct,String(getCouponCount(pct)+1));}
+function getCouponRemain(pct){return Math.max(0, COUPON_MAX-getCouponCount(pct));}
+
+// 쿠폰 발급 한도 체크 후 발급
+function tryIssueCoupon(){
+  const coupon=getBurgerCoupon(burgers);
+  if(!coupon) return;
+  const remain=getCouponRemain(coupon.pct);
+  if(remain<=0){
+    showModal('🚫',coupon.pct+'% 할인 쿠폰은\n1인당 '+COUPON_MAX+'개까지만 발급돼요!',
+      '이미 최대 수량을 발급받으셨어요.\n다른 쿠폰을 확인해보세요.',
+      '확인',()=>{});
+    return;
+  }
+  // 발급 카운트 증가 후 앱으로 이동
+  addCouponCount(coupon.pct);
+  // 발급 버튼 텍스트 업데이트
+  const remain2=getCouponRemain(coupon.pct);
+  const ib=document.getElementById('issue-btn');
+  if(ib) ib.textContent='🎫 쿠폰 발급 받기 (잔여 '+remain2+'회)';
+  window.location.href=OKC_URL;
+}
+
+function getBurgerCoupon(n){
+  if(n>=9) return {pct:40, label:'A버거 40% 할인 쿠폰'};
+  if(n>=6) return {pct:30, label:'A버거 30% 할인 쿠폰'};
+  if(n>=3) return {pct:20, label:'A버거 20% 할인 쿠폰'};
+  return null;
+}
+function doKakao(fromResult){
+  addBonus('share');
+  const score = fromResult ? (burgers || 0) : 0;
+  const result = fromResult ? (window.lastBrainResult || getLeftBrainResult(score)) : {age:'?', title:'A버거 챌린지 좌뇌 나이 테스트', desc:'너는 몇 살 나오는지 해봐'};
+  const shareUrl = getShareUrl();
+  const title = fromResult ? '🧠 내 좌뇌 나이 ' + result.age + '세' : '🧠 A버거 챌린지 좌뇌 나이 테스트';
+  const description = fromResult ? result.title + ' - ' + result.desc + ' 🍔 ' + score + '개 완성' : '90초 안에 버거를 쌓고 좌뇌 나이를 확인해보세요.';
+  if(window.Kakao&&window.Kakao.isInitialized()){
+    const content = {title:title,description:description,link:{mobileWebUrl:shareUrl,webUrl:shareUrl}};
+    const imageUrl = getShareImageUrl(result);
+    if(imageUrl) content.imageUrl = imageUrl;
+    window.Kakao.Share.sendDefault({objectType:'feed',content:content,buttons:[{title:'나도 해보기',link:{mobileWebUrl:shareUrl,webUrl:shareUrl}}]});
+  } else doCopy(fromResult ? 'copy-result' : 'copy-intro');
+}
+function doCopy(btnId){
+  addBonus('share');
+  navigator.clipboard&&navigator.clipboard.writeText(buildShareText());
+  const b=document.getElementById(btnId);
+  if(!b)return;const orig=b.textContent;b.textContent='✅ 복사됨!';b.style.color='#4CAF50';
+  setTimeout(()=>{b.textContent=orig;b.style.color='';},2500);
+}
+// 쿠폰 발급 버튼 (인트로 현황판에서 호출)
+function addIssueBonus(){addBonus('issue');}
+document.addEventListener('touchstart',e=>{if(e.touches.length>1)e.preventDefault();},{passive:false});
+document.addEventListener('gesturestart',e=>e.preventDefault(),{passive:false});
+updateIntroUI();
+</script>
+</body>
+</html>
