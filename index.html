@@ -167,7 +167,7 @@ button:active{transform:scale(.96)}
       <div style="font-size:48px;margin-top:8px">🧠</div>
       <div class="noto" style="font-size:13px;color:#aaa;margin-top:6px">내 좌뇌 나이</div>
       <div id="brain-age" style="font-size:64px;line-height:1;color:#FFD700;text-shadow:0 0 26px rgba(255,215,0,.38);margin-top:8px">—<span style="font-size:32px;color:#FF9500">세</span></div>
-      <div id="brain-grade" style="font-size:18px;color:#fff;margin-top:12px">—</div>
+      <div id="brain-grade" style="display:none"></div>
       <div id="brain-msg" class="noto" style="font-size:14px;color:#ddd;line-height:1.7;margin-top:10px;white-space:pre-line">—</div>
       <div style="display:inline-flex;align-items:center;gap:6px;margin-top:16px;background:rgba(255,149,0,.12);border:1px solid rgba(255,149,0,.35);border-radius:999px;padding:8px 13px;color:#FF9500;font-size:14px">🍔 <span id="burger-score-display">0</span>개 완성</div>
     </div>
@@ -469,15 +469,20 @@ function updateIntroUI(){
 function getLeftBrainResult(score){
   const s=Math.max(0, Number(score)||0);
   const map=[
-    {min:6,age:19,title:'좌뇌 고속모드',desc:'리듬 타기 시작하면 이렇게 됩니다\n이 정도면 진짜 잘하는 편이에요'},
-    {min:5,age:25,title:'상위권 감각',desc:'속도와 정확도 둘 다 좋은 상태\n한 판 더 하면 더 갈 수 있어요'},
-    {min:4,age:33,title:'흐름 꽤 좋음',desc:'안정적으로 쌓는 플레이\n이제 속도만 붙이면 상위권이에요'},
-    {min:3,age:40,title:'감 잡기 시작',desc:'이제 게임 흐름이 보이는 단계\n여기서부터 점수 확 올라갑니다'},
-    {min:2,age:45,title:'구조 파악 완료',desc:'알겠는데 왜 안 되지? 딱 그 구간\n조금만 익숙해지면 바로 올라가요'},
-    {min:1,age:50,title:'예열 완료',desc:'처음엔 다 이렇게 시작해요\n몇 판만 더 하면 확 달라집니다'},
-    {min:0,age:60,title:'좌뇌 준비운동 중',desc:'아직 손이 상황 파악 중이에요\n다음 판부터가 진짜 시작입니다'}
+    {min:11, age:'15', title:'', desc:'이건 인간인가요? 처리속도 측정 불가 수준!'},
+    {min:10, age:'17', title:'', desc:'F1 드라이버급 반응속도! 상위 1% 두뇌입니다.'},
+    {min:9,  age:'20', title:'', desc:'거의 인간의 한계에 도달! 두뇌 처리속도 상위 2%!'},
+    {min:8,  age:'23', title:'', desc:'두뇌 처리속도 상위 5%! 반응이 남다릅니다.'},
+    {min:7,  age:'25', title:'', desc:'순발력과 공간 감각이 남다릅니다. 상위 10%!'},
+    {min:6,  age:'30', title:'', desc:'판단과 실행이 빠릿빠릿! 상위 20% 진입!'},
+    {min:5,  age:'35', title:'', desc:'두뇌 터보 ON! 상위 30% 수준이에요.'},
+    {min:4,  age:'40', title:'', desc:'반응속도 꽤 빠른 편이에요. 추월 시작!'},
+    {min:3,  age:'45', title:'', desc:'속도감이 느껴지기 시작! 평균 이상이에요.'},
+    {min:2,  age:'50', title:'', desc:'안전하게 달리는 중. 슬슬 가속 페달 밟아볼까요?'},
+    {min:1,  age:'55', title:'', desc:'엔진이 막 켜진 상태! 한 번 더 하면 달라질 거예요.'},
+    {min:0,  age:'60', title:'', desc:'오늘 컨디션이 좀 안 좋은 날인가요? 다시 도전!'},
   ];
-  return map.find(x=>s>=x.min);
+  return map.find(x => s >= x.min);
 }
 
 function goOKC(){window.location.href=OKC_URL;}
@@ -790,7 +795,7 @@ function getBurgerCoupon(n){
 function doKakao(fromResult){
   addBonus('share');
   const score = fromResult ? (burgers || 0) : 0;
-  const result = fromResult ? (window.lastBrainResult || getLeftBrainResult(score)) : {age:'?', title:'A버거 챌린지 좌뇌 나이 테스트', desc:'너는 몇 살 나오는지 해봐'};
+  const result = fromResult ? (window.lastBrainResult || getLeftBrainResult(score)) : {age:'?', title:'', desc:'너는 몇 살 나오는지 해봐'};
   const shareUrl = getShareUrl();
   const title = fromResult ? '🧠 내 좌뇌 나이 ' + result.age + '세' : '🧠 A버거 챌린지 좌뇌 나이 테스트';
   const description = fromResult ? result.title + ' - ' + result.desc + ' 🍔 ' + score + '개 완성' : '90초 안에 버거를 쌓고 좌뇌 나이를 확인해보세요.';
@@ -798,7 +803,7 @@ function doKakao(fromResult){
     const content = {title:title,description:description,link:{mobileWebUrl:shareUrl,webUrl:shareUrl}};
     const imageUrl = getShareImageUrl(result);
     if(imageUrl) content.imageUrl = imageUrl;
-    window.Kakao.Share.sendDefault({objectType:'feed',content:content,buttons:[{title:'나도 해보기',link:{mobileWebUrl:shareUrl,webUrl:shareUrl}}]});
+    window.Kakao.Share.sendDefault({objectType:'feed',content:content,buttons:[{title:'',link:{mobileWebUrl:shareUrl,webUrl:shareUrl}}]});
   } else doCopy(fromResult ? 'copy-result' : 'copy-intro');
 }
 function doCopy(btnId){
